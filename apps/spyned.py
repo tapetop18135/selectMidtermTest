@@ -8,6 +8,9 @@ from sqlalchemy.orm import sessionmaker
 import dicttoxml
 import datetime 
 
+from lxml import etree
+import xmlschema
+
 # Generate a ComplexModelBase subclass with
 # metadata information
 # Initialize SQLAlchemy Environment
@@ -65,7 +68,7 @@ class AirTempService(ServiceBase):
 
         if(text == "get_information"):
             results = engine.execute('select * from information')
-            print(results)
+            # print(results)
             dictTemp = []
             for r in results:
                 # print(r)
@@ -75,13 +78,19 @@ class AirTempService(ServiceBase):
                 tempData['hobby'] = r[2]
             
                 dictTemp.append(tempData)
-            # print(dictTemp)
             xml = dicttoxml.dicttoxml(dictTemp)
-            # print(xml)
-        else:
-            xml = "Error"
             
-        return xml
+            my_schema = xmlschema.XMLSchema('./data/xsd/information.xsd')
+            root = etree.XML(xml)
+            if(my_schema.is_valid(root)):
+                result = xml
+            else:
+                result = """<Error>Error NOT Valid</Error>"""
+
+        else:
+            result = "Error"
+            
+        return result
 
 def create_app(flask_app):
     """Creates SOAP services application and distribute Flask config into
