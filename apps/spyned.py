@@ -92,6 +92,39 @@ class AirTempService(ServiceBase):
             
         return result
 
+    @rpc(String, String, Float, _returns=String)
+    def setDataWeight(ctx, name, address, weight):
+        result = engine.execute('insert into table_data_something values ("'+name+'","'+address+'",'+str(weight)+',"no")')
+        result_ = "Success"
+        
+        return result_
+
+    @rpc(_returns=String)
+    def sended_something(ctx):
+        results = engine.execute(f'update table_data_something set status_sended = "yes"')
+        result_ = "Success"
+
+        return result_
+
+    @rpc(_returns=String)
+    def check_stock_sended_all(ctx):
+        results = engine.execute(f'select * from table_data_something')
+        dictTemp = []
+        for r in results:
+                # print(r)
+            tempData={}
+            tempData['name'] = r[0]
+            tempData['address'] = r[1]
+            tempData['weight'] = r[2]
+            tempData['status_sended'] = r[3]
+            
+            dictTemp.append(tempData)
+        xml = dicttoxml.dicttoxml(dictTemp)
+        
+        result = xml
+
+        return result
+    
 def create_app(flask_app):
     """Creates SOAP services application and distribute Flask config into
     user con defined context for each method call.
