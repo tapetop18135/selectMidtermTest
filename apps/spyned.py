@@ -13,19 +13,19 @@ import datetime
 # Initialize SQLAlchemy Environment
 engine = create_engine('sqlite:///./air.db')
 
-class TempValue(ComplexModel):
-    __namespace__ = "TempValue"
-    key = Integer()
-    lat = Float()
-    sst = Float()
-    date_use = String()
+# class TempValue(ComplexModel):
+#     __namespace__ = "TempValue"
+#     key = Integer()
+#     lat = Float()
+#     sst = Float()
+#     date_use = String()
 
-def mapArray(Array_t):
-    temp = []
-    for i in Array_t:
-        temp.append(TempValue(key=i[0], lat=i[1], sst=i[2], date_use=i[3],))
+# def mapArray(Array_t):
+#     temp = []
+#     for i in Array_t:
+#         temp.append(TempValue(key=i[0], lat=i[1], sst=i[2], date_use=i[3],))
 
-    return temp
+#     return temp
 
 class AirTempService(ServiceBase):
 
@@ -53,11 +53,35 @@ class AirTempService(ServiceBase):
                 dictTemp.append(tempData)
             
             xml = dicttoxml.dicttoxml(dictTemp)
+            # print(xml)
         else:
             xml = "Error"
             
         return xml
 
+    
+    @rpc(String ,_returns=String)
+    def getInformation(ctx, text):
+
+        if(text == "get_information"):
+            results = engine.execute('select * from information')
+            print(results)
+            dictTemp = []
+            for r in results:
+                # print(r)
+                tempData={}
+                tempData['id'] = r[0]
+                tempData['name'] = r[1]
+                tempData['hobby'] = r[2]
+            
+                dictTemp.append(tempData)
+            # print(dictTemp)
+            xml = dicttoxml.dicttoxml(dictTemp)
+            # print(xml)
+        else:
+            xml = "Error"
+            
+        return xml
 
 def create_app(flask_app):
     """Creates SOAP services application and distribute Flask config into
