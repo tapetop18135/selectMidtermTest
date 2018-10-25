@@ -29,11 +29,10 @@ def mapArray(Array_t):
 
 class AirTempService(ServiceBase):
 
-    @rpc(String, String,_returns=String)
-    def setTempData(ctx, room_id, tempV):
+    @rpc(String, Float, Float, _returns=String)
+    def setTempData(ctx, room_id, tempV, humidV):
         Tnow = datetime.datetime.now()
-        print(room_id, tempV)
-        result = engine.execute('insert into tempTB values ("'+room_id+'","'+tempV+'","'+str(Tnow)+'")')
+        result = engine.execute('insert into tempTB values ("'+room_id+'",'+str(tempV)+','+str(humidV)+',"'+str(Tnow)+'")')
         result_ = "Success"
         
         return result_
@@ -48,7 +47,8 @@ class AirTempService(ServiceBase):
                 tempData={}
                 tempData['room_id'] = r[0]
                 tempData['temp'] = r[1]
-                tempData['date'] = r[2]
+                tempData['humid'] = r[2]
+                tempData['date'] = r[3]
             
                 dictTemp.append(tempData)
             
