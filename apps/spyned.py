@@ -111,7 +111,6 @@ class AirTempService(ServiceBase):
         results = engine.execute(f'select * from table_data_something')
         dictTemp = []
         for r in results:
-                # print(r)
             tempData={}
             tempData['name'] = r[0]
             tempData['address'] = r[1]
@@ -120,8 +119,13 @@ class AirTempService(ServiceBase):
             
             dictTemp.append(tempData)
         xml = dicttoxml.dicttoxml(dictTemp)
-        
-        result = xml
+        my_schema = xmlschema.XMLSchema('./data/xsd/stock_all.xsd')
+        root = etree.XML(xml)
+        if(my_schema.is_valid(root)):
+            result = xml
+        else:
+            result = """<Error>Error NOT Valid</Error>"""
+        # result = xml
 
         return result
     
