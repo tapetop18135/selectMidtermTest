@@ -21,7 +21,7 @@ requests-toolbelt==0.8.0
 six==1.11.0
 spyne==2.12.14
 SQLAlchemy==1.2.12
-urllib3==1.24
+urllib3==1.26.5
 Werkzeug==0.14.1
 xmlschema==1.0.5
 zeep==3.1.0
